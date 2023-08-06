@@ -1,0 +1,9 @@
+.vscode
+
+.vs
+bin
+bin-int
+generated
+**.sln
+
+TextFusion.json
