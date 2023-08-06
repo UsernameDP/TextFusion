@@ -97,3 +97,13 @@ etc - Nothing
 3. Go to _scripts_ under _TextFusion_
 4. Double click _create.bat_ for debug, _release.bat_ for release version
 5. Check within bin in _TextFusion_ to find the .exe executable.
+
+# TODO
+
+- Test out having WatchDirectoryFunction and FileStateFunction into their own threads and see if it improves performance.
+- Create the GUI version of this using IMGUI (doesn't watch multiple files, just one)
+
+# Lessons Learned
+
+- Do not try to make code organization perfect, it can turn a 2 hour project into a 1 week project (that is what happened this project).
+- Unless you are trying to create a template or you already know all of your technologies, always try writing your code in a main.cpp file then separate them into different classes later.
