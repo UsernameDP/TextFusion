@@ -27,7 +27,7 @@ Within the `WatchDirectory` there must directly be a TextFusion.json file with a
   "RelevantDirectoryNames": [],
   "FileToWrite": "C:\\Users\\Devin\\Downloads\\Code\\VS\\Cpp\\OpenGL\\test.cpp",
   "WriteFormat": "someFunction(\"${path}\",\n\"${content}\");\n",
-  "WriteFormatEncapsulation": "#include <iostream>\n#include<string>\nvoid someFunction(std::string str1, std::string str2){ std::cout << str1; };\n int main(){ ${here} \n return 0;}",
+  "WriteFormatEncapsulation": "//C:\\Users\\Devin\\Downloads\\Code\\VS\\Cpp\\OpenGL\\test.cpp\n#include <iostream>\n#include<string>\nvoid someFunction(std::string str1, std::string str2){ std::cout << str1; };\n int main(){ ${here} \n return 0;}",
 
   "WatchDirectoryDelay": 50,
   "FilesStateDelay": 50,
