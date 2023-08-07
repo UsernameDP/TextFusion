@@ -4,7 +4,7 @@
 namespace TextFusion {
 	TextFile::TextFile(const std::string& path) {
 		this->path = static_cast<fs::path>(path);
-		this->content = readFile(path);
+		this->content = exd::readFile(path);
 		this->exists = true;
 		this->updated = false; // first time CompareFileTime will always say updated = true
 	}
@@ -37,6 +37,6 @@ namespace TextFusion {
         return true; // for no errors
 	}
     void TextFile::updateContent() {
-        this->content = readFile(this->path.string());
+        this->content = exd::readFile(this->path.string());
     }
 }

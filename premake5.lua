@@ -24,7 +24,7 @@ project "TextFusion"
     language "C++"
     cppdialect "C++20"
     staticruntime "on"
-    location "Generated"
+    -- location "Generated"
 
     pchheader "pch.hpp"
     pchsource "src/pch.cpp"

@@ -8,7 +8,7 @@ int main()
 {
     TextFusion::Program::INIT();
     std::string watchDirectory = "";
-    while (!dirExists(watchDirectory))
+    while (!exd::dirExists(watchDirectory))
     {
         std::cout << "Enter WatchDirectory : ";
         std::getline(std::cin, watchDirectory);

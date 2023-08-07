@@ -7,7 +7,7 @@ namespace TextFusion
 	bool Program::addFile(const std::string &path)
 	{
 		std::unique_lock lock(filesMtx);
-		if (fileExists(path))
+		if (exd::fileExists(path))
 		{
 			files[path] = std::make_shared<TextFile>(path);
 		}
@@ -26,19 +26,19 @@ namespace TextFusion
 	{
 		if (relevantDirectories.empty())
 		{
-			filesWithExtensions(foundFiles, settings->get("WatchDirectory"), extensions, true);
+			exd::filesWithExtensions(foundFiles, settings->get("WatchDirectory"), extensions, true);
 		}
 		else
 		{
 			for (std::string relevantDirectory : relevantDirectories)
 			{
-				filesWithExtensions(foundFiles, relevantDirectory, extensions, true);
+				exd::filesWithExtensions(foundFiles, relevantDirectory, extensions, true);
 			}
 		}
 
 		for (std::string &path : foundFiles)
 		{
-			if (!mapHas(files, path))
+			if (!exd::mapHas(files, path))
 			{
 				addFile(path);
 			}
@@ -98,7 +98,7 @@ namespace TextFusion
 						}
 					}
 					for (const auto& pair : contentofFiles) {
-						if (!mapHas(files, pair.first)) {
+						if (!exd::mapHas(files, pair.first)) {
 							return true;
 						}
 					}
@@ -107,7 +107,7 @@ namespace TextFusion
 			// Check if any file was deleted
 			for (const auto &pair : contentofFiles)
 			{
-				if (!mapHas(files, pair.first))
+				if (!exd::mapHas(files, pair.first))
 				{
 					filesToRemove.push_back(pair.first);
 				}
@@ -129,8 +129,9 @@ namespace TextFusion
 				}
 
 				std::string copy_writeFormat = writeFormat;
-				replaceWith(copy_writeFormat, "${path}", getReplaceAll(path, "\\", "\\\\"));
-				replaceWith(copy_writeFormat, "${content}", getReplaceAll(trim(pair.second->content), "\n", "\\n\"\n\""));
+				exd::replaceWith(copy_writeFormat, "${path}", exd::getReplaceAll(path, "\\", "\\\\"));
+				exd::replaceWith(copy_writeFormat, "${relativePath}", exd::getReplaceAll(exd::getRelative(path, settings->get("WatchDirectory")), "\\", "\\\\"));
+				exd::replaceWith(copy_writeFormat, "${content}", exd::getReplaceAll(exd::trim(pair.second->content), "\n", "\\n\"\n\""));
 				contentofFiles[path] = copy_writeFormat;
 			}
 
@@ -140,8 +141,8 @@ namespace TextFusion
 			{
 				data += pair.second;
 			}
-			replaceWith(writeFormatEncap_copy, "${here}", data);
-			writeFile(fileToWrite, writeFormatEncap_copy);
+			exd::replaceWith(writeFormatEncap_copy, "${here}", data);
+			exd::writeFile(fileToWrite, writeFormatEncap_copy);
 		};
 	}
 	void Program::KeyInputThread()
@@ -235,7 +236,7 @@ namespace TextFusion
 		std::vector<std::string> foundFiles;
 		std::vector<std::string> relevantDirectories;
 		std::vector<std::string> filesToRemove;
-		getAllDirectoryWithNames(relevantDirectories, settings->get("WatchDirectory"), relevantDirectoryNames, true);
+		exd::getAllDirectoryWithNames(relevantDirectories, settings->get("WatchDirectory"), relevantDirectoryNames, true);
 
 		// Disbatched Threads
 		std::thread consoleHandler(&Program::ConsoleThread, this);

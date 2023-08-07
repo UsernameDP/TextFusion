@@ -4,7 +4,7 @@
 namespace TextFusion {
 	Settings::Settings(const std::string& watchDirectoryPath) {
         fs::path settingsPath = static_cast<fs::path>(watchDirectoryPath) / "TextFusion.json";
-        if (!fileExists(settingsPath.string()))
+        if (!exd::fileExists(settingsPath.string()))
         {
             THROW_RUNTIME_ERROR("Make sure to create TextFusion.json with all settings in " + watchDirectoryPath);
         }

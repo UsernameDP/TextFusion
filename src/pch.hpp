@@ -7,7 +7,7 @@
 #include <algorithm>
 
 #include "util/FileHandler.hpp"
-#include "util/Log.hpp"
-#include "util/Helper.hpp"
+#include "util/LogHandler.hpp"
+#include "util/PrimitiveTypeHandler.hpp"
 
 #include "Core/Program.hpp"

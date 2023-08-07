@@ -10,6 +10,7 @@ Within the `WatchDirectory` there must directly be a TextFusion.json file with a
 - `RelevantDirectoryNames` : adds extra specification on top of `Extensions` such that the program will only search for `Extensions` within the directories with the following names.
 - `FileToWrite` : this is the file you will write your file information with the given formats.
   --`${path}` - pastes in the file's path.
+  -- `${relativePath}` - pastes in the file's path relative to the WatchDirectory
   -- `${content}` - pastes in the raw content of the file.
 
 - `WriteFormat` : specifying the format to write each file information in.
