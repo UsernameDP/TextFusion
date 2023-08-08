@@ -4,7 +4,7 @@
 /bin/
 /bin-int/
 /generated/
-**.vcxproj
-**.sln
+*.vcxproj
+*.sln
 
 TextFusion.json
