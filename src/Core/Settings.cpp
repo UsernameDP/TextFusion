@@ -29,7 +29,7 @@ namespace TextFusion {
     json& Settings::get(const std::string& key) {
         if (jsonSettings[key].is_null())
             THROW_RUNTIME_ERROR(key + " is not defined in jsonSettings");
-
+           
         return jsonSettings[key];
     }
 

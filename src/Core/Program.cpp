@@ -218,6 +218,12 @@ namespace TextFusion
 	{
 		settings = std::make_shared<Settings>(watchDirectory);
 	}
+	Program::~Program() {
+		consoleHandler.join();
+		fileFusionHandler.join();
+
+		LOG_DESTRUCTOR("Program");
+	}
 
 	void Program::init()
 	{
@@ -228,7 +234,7 @@ namespace TextFusion
 		json relevantDirectoryNames_json = settings->get("RelevantDirectoryNames");
 		json extensions_json = settings->get("Extensions");
 
-		std::vector<std::string> extensions = extensions_json.get<std::vector<std::string>>();
+		const std::vector<std::string>& extensions = extensions_json; 
 
 		std::vector<std::string> relevantDirectoryNames = relevantDirectoryNames_json.get<std::vector<std::string>>();
 
@@ -239,17 +245,14 @@ namespace TextFusion
 		exd::getAllDirectoryWithNames(relevantDirectories, settings->get("WatchDirectory"), relevantDirectoryNames, true);
 
 		// Disbatched Threads
-		std::thread consoleHandler(&Program::ConsoleThread, this);
-		std::thread fileFusionHandler(&Program::FileFusionThread, this);
+		consoleHandler = std::thread(&Program::ConsoleThread, this);
+		fileFusionHandler = std::thread(&Program::FileFusionThread, this);
 
 		while (!STOP)
 		{
 			WatchDirectoryFunction(relevantDirectories, foundFiles, extensions);
 			FilesStateFunction(filesToRemove);
 		}
-
-		consoleHandler.join();
-		fileFusionHandler.join();
 	}
 
 	void Program::INIT()

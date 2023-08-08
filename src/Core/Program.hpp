@@ -18,6 +18,9 @@ namespace TextFusion
 		std::mutex consoleMtx;
 		std::atomic<char> key = ' ';
 
+		std::thread consoleHandler; //deleted in gui version
+		std::thread fileFusionHandler;
+
 	private:
 		// Helper Functions
 		bool addFile(const std::string &path);
@@ -36,6 +39,7 @@ namespace TextFusion
 
 	public:
 		Program(const std::string &watchDirectory);
+		~Program();
 
 		void init();
 		void run();
