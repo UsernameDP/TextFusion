@@ -1,9 +1,10 @@
-.vscode
+/.vscode/
 
-.vs
-./bin
-./bin-int
-./generated
+/.vs/
+/bin/
+/bin-int/
+/generated/
+**.vcxproj
 **.sln
 
 TextFusion.json
