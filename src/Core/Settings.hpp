@@ -10,13 +10,13 @@ namespace TextFusion
     private:
         json jsonSettings;
 
-    private:
+    public:
         static std::unordered_map<std::string, json::value_t> requiredSettings;
 
     public:
         Settings(const std::string &watchDirectoryPath);
 
-        json &get(const std::string &key);
+        const json &get(const std::string &key);
 
     public:
         static inline void INIT()
@@ -28,6 +28,7 @@ namespace TextFusion
             requiredSettings["FileToWrite"] = json::value_t::string;
             requiredSettings["WriteFormat"] = json::value_t::string;
             requiredSettings["WriteFormatEncapsulation"] = json::value_t::string;
+            requiredSettings["ConsoleCallBacks"] = json::value_t::array;
             // Customization
             requiredSettings["WatchDirectoryDelay"] = json::value_t::number_unsigned;
             requiredSettings["FilesStateDelay"] = json::value_t::number_unsigned;

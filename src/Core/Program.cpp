@@ -4,17 +4,16 @@
 
 namespace TextFusion
 {
-
 	bool Program::addFile(const std::string &path)
 	{
 		std::unique_lock lock(filesMtx);
 		if (exd::fileExists(path))
 		{
-			files[path] = std::make_shared<TextFile>(path);
+			files[path] = std::make_shared<TextFile>(path, settings->get("WatchDirectory"));
 		}
 		else
 		{
-			WARNING(path + "\\tdoes not exist");
+			WARNING(path + "\tdoes not exist");
 			return false;
 		}
 
@@ -104,6 +103,7 @@ namespace TextFusion
 		const std::string& fileToWrite = settings->get("FileToWrite");
 		const std::string& writeFormat = settings->get("WriteFormat");
 		const std::string& writeFormatEncp = settings->get("WriteFormatEncapsulation");
+		const std::vector<std::string>& consoleCallBacks = settings->get("ConsoleCallBacks");
 
 		std::vector<std::string> filesToRemove;
 		std::unordered_map<std::string, std::string> filesContentHistory;
@@ -151,9 +151,11 @@ namespace TextFusion
 				}
 
 				std::string copy_writeFormat = writeFormat;
-				exd::replaceWith(copy_writeFormat, "${path}", exd::getReplaceAll(path, "\\", "\\\\"));
-				exd::replaceWith(copy_writeFormat, "${relativePath}", exd::getReplaceAll(exd::getRelative(path, settings->get("WatchDirectory")), "\\", "\\\\"));
-				exd::replaceWith(copy_writeFormat, "${content}", exd::getReplaceAll(exd::trim(pair.second->content), "\n", "\\n\"\n\""));
+				FileCodes fileCodes(*pair.second);
+				for (const auto& fileCode : fileCodes) {
+					exd::replaceWith(copy_writeFormat, fileCode.first, fileCode.second);
+				}
+
 				filesContentHistory[path] = copy_writeFormat;
 			}
 
@@ -165,6 +167,16 @@ namespace TextFusion
 			}
 			exd::replaceWith(writeFormatEncap_copy, "${here}", data);
 			exd::writeFile(fileToWrite, writeFormatEncap_copy);
+
+			//Console CallBacks called here
+			SettingsCodes settingsCodes(*settings);
+			for (const std::string& callBack : consoleCallBacks) {
+				std::string callBack_copy = callBack;
+				for (const auto& settingsCode : settingsCodes) {
+					exd::replaceWith(callBack_copy, settingsCode.first, settingsCode.second);
+				}
+				system(callBack_copy.c_str());
+			}
 		};
 	}
 	void Program::KeyInputThread()

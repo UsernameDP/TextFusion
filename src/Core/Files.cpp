@@ -2,8 +2,9 @@
 #include "Files.hpp"
 
 namespace TextFusion {
-	TextFile::TextFile(const std::string& path) {
-		this->path = static_cast<fs::path>(path);
+	TextFile::TextFile(const std::string& path, const std::string& parent) {
+        this->parent = static_cast<fs::path>(parent);
+        this->path = static_cast<fs::path>(path);
 		this->content = exd::readFile(path);
 		this->exists = true;
 		this->updated = false; // first time CompareFileTime will always say updated = true

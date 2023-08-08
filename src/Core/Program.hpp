@@ -4,6 +4,7 @@
 #include <atomic>
 #include "Settings.hpp"
 #include "Files.hpp"
+#include "KeyCodes.hpp"
 
 namespace TextFusion
 {

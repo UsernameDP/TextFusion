@@ -8,13 +8,12 @@ namespace TextFusion {
         exd::getAllFilesWithNames(files, watchDirectoryPath, names, true);
         if (files.size() > 1) {
             THROW_RUNTIME_ERROR("There can only be 1 TextFusion.json");
-        }
-
-        fs::path settingsPath = files.front();
-        if (!exd::fileExists(settingsPath.string()))
+        }else if (files.empty())
         {
             THROW_RUNTIME_ERROR("Make sure to create TextFusion.json with all settings in " + watchDirectoryPath);
         }
+
+        fs::path settingsPath = files.front();
 
         std::ifstream settingsFile(settingsPath);
         jsonSettings = json::parse(settingsFile);
@@ -40,7 +39,7 @@ namespace TextFusion {
 
         LOG_CONSTRUCTOR("TextFusion::Settings");
 	}
-    json& Settings::get(const std::string& key) {
+    const json& Settings::get(const std::string& key) {
         if (jsonSettings[key].is_null())
             THROW_RUNTIME_ERROR(key + " is not defined in jsonSettings");
            

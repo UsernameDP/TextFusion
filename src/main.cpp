@@ -13,9 +13,9 @@ int main()
         std::cout << "Enter WatchDirectory : ";
         std::getline(std::cin, watchDirectory);
     }
-    std::unique_ptr<Program> program = std::make_unique<Program>(watchDirectory);
     try
     {
+        std::unique_ptr<Program> program = std::make_unique<Program>(watchDirectory);
         program->init();
         program->run();
     }

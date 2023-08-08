@@ -4,6 +4,7 @@
 namespace TextFusion {
     struct TextFile
     {
+        fs::path parent;
         fs::path path;
         std::string content;
         FILETIME previousState;
@@ -15,7 +16,7 @@ namespace TextFusion {
         bool updated;
         bool exists;
 
-        TextFile(const std::string& path);
+        TextFile(const std::string& path, const std::string& parent);
         ~TextFile();
 
         bool updateAttributes();
