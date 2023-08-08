@@ -18,25 +18,28 @@ namespace TextFusion
 		std::mutex consoleMtx;
 		std::atomic<char> key = ' ';
 
-		std::thread consoleHandler; //deleted in gui version
+		std::thread consoleHandler; //will bedeleted in gui version
+		std::thread filesElementsHandler;
 		std::thread fileFusionHandler;
 
 	private:
 		// Helper Functions
 		bool addFile(const std::string &path);
 
-		// Thread Functions
-		void WatchDirectoryFunction(const std::vector<std::string> &relevantDirectories,
+		// Portions of Thread Functions
+		void watchDirectory_addNewFiles(const std::vector<std::string> &relevantDirectories,
 									std::vector<std::string> &foundFiles,
 									const std::vector<std::string> &extensions);
-		void FilesStateFunction(std::vector<std::string> &filesToRemove);
-		void FileFusionThread();
-		void KeyInputThread();
-		void ConsoleThread();
+		void updateTextFileMembers(std::vector<std::string> &filesToRemove);
+		// Thread Functions
+		void fileElementsThread();
+		void fileFusionThread();
+
+		void KeyInputThread(); //will be deleted in gui version
+		void ConsoleThread(); //will be delete in gui version
 
 	public:
 		static bool STOP;
-
 	public:
 		Program(const std::string &watchDirectory);
 		~Program();

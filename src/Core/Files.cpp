@@ -7,6 +7,7 @@ namespace TextFusion {
 		this->content = exd::readFile(path);
 		this->exists = true;
 		this->updated = false; // first time CompareFileTime will always say updated = true
+        LOG_CONSTRUCTOR("TextFusion::TextFile path=" + this->path.string());
 	}
 	TextFile::~TextFile() {
 		LOG_DESTRUCTOR("TextFusion::TextFile path=" + this->path.string());
@@ -15,9 +16,8 @@ namespace TextFusion {
         if (!GetFileAttributesExW(path.wstring().c_str(), GetFileExInfoStandard, &attributes))
         {
             DWORD errorCode = GetLastError();
-
-            if (errorCode == ERROR_FILE_NOT_FOUND || errorCode == ERROR_FILE_NOT_FOUND)
-            {
+            
+            if (errorCode == ERROR_PATH_NOT_FOUND || errorCode == ERROR_FILE_NOT_FOUND) {
                 exists = false;
             }
 

@@ -132,7 +132,7 @@ namespace exd
 			}
 			else if (recursive)
 			{
-				if (entry.is_directory() && entry.exists())
+				if (dirExists(entry.path().string()))
 				{
 					filesWithExtensions(arr, entry.path().string(), extensions, true);
 				}

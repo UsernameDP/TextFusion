@@ -4,6 +4,7 @@
 
 namespace TextFusion
 {
+
 	bool Program::addFile(const std::string &path)
 	{
 		std::unique_lock lock(filesMtx);
@@ -19,7 +20,8 @@ namespace TextFusion
 
 		return true;
 	}
-	void Program::WatchDirectoryFunction(
+	
+	void Program::watchDirectory_addNewFiles(
 		const std::vector<std::string> &relevantDirectories,
 		std::vector<std::string> &foundFiles,
 		const std::vector<std::string> &extensions)
@@ -47,7 +49,7 @@ namespace TextFusion
 		foundFiles.clear();
 		std::this_thread::sleep_for(std::chrono::milliseconds(settings->get("WatchDirectoryDelay")));
 	}
-	void Program::FilesStateFunction(std::vector<std::string> &filesToRemove)
+	void Program::updateTextFileMembers(std::vector<std::string> &filesToRemove)
 	{
 		std::unique_lock lock(filesMtx);
 		for (const auto &pair : files)
@@ -76,45 +78,65 @@ namespace TextFusion
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(settings->get("FilesStateDelay")));
 	}
-	void Program::FileFusionThread()
+	
+	void Program::fileElementsThread() {
+		//Get settings
+		const std::vector<std::string>& extensions = settings->get("Extensions");
+		const std::vector<std::string>& relevantDirectoryNames = settings->get("RelevantDirectoryNames");
+		const std::string& watchDirectory = settings->get("WatchDirectory");
+
+		// Extra Variables
+		std::vector<std::string> foundFiles;
+		std::vector<std::string> relevantDirectories;
+		std::vector<std::string> filesToRemove;
+
+		while (!STOP)
+		{
+			exd::getAllDirectoryWithNames(relevantDirectories, watchDirectory, relevantDirectoryNames, true);
+			watchDirectory_addNewFiles(relevantDirectories, foundFiles, extensions);
+			updateTextFileMembers(filesToRemove);
+
+			relevantDirectories.clear(); //because getAllDirectoryWithNames always appends
+		}
+	}
+	void Program::fileFusionThread()
 	{
-		json fileToWrite_json = settings->get("FileToWrite");
-		json writeFormat_json = settings->get("WriteFormat");
-		json writeFormatEncap_json = settings->get("WriteFormatEncapsulation");
-		std::string fileToWrite = fileToWrite_json.get<std::string>();
-		std::string writeFormat = writeFormat_json.get<std::string>();
-		std::string writeFormatEncp = writeFormatEncap_json.get<std::string>();
+		const std::string& fileToWrite = settings->get("FileToWrite");
+		const std::string& writeFormat = settings->get("WriteFormat");
+		const std::string& writeFormatEncp = settings->get("WriteFormatEncapsulation");
 
 		std::vector<std::string> filesToRemove;
-		std::unordered_map<std::string, std::string> contentofFiles;
+		std::unordered_map<std::string, std::string> filesContentHistory;
 		while (!STOP)
 		{
 			std::unique_lock lock(filesMtx);
-			fileFusion_cv.wait(lock, [&]
-							   {
+			fileFusion_cv.wait(lock, [&] {
+				//if updated, or added
+				if (files.size() != filesContentHistory.size()) {
+					return true;
+				}
+				else {
 					for (const auto& pair : files) {
 						if (pair.second->updated) {
 							return true;
 						}
 					}
-					for (const auto& pair : contentofFiles) {
-						if (!exd::mapHas(files, pair.first)) {
-							return true;
-						}
-					}
-					return STOP; });
+				}
+				return STOP; });
+
 
 			// Check if any file was deleted
-			for (const auto &pair : contentofFiles)
+			for (const auto &pair : filesContentHistory)
 			{
 				if (!exd::mapHas(files, pair.first))
 				{
 					filesToRemove.push_back(pair.first);
 				}
 			}
+
 			for (const std::string &path : filesToRemove)
 			{
-				contentofFiles.erase(path);
+				filesContentHistory.erase(path);
 			}
 			filesToRemove.clear();
 
@@ -122,7 +144,7 @@ namespace TextFusion
 			for (auto &pair : files)
 			{
 				std::string path = pair.second->path.string();
-				if (pair.second->updated)
+				if (pair.second->updated && exd::fileExists(path))
 				{
 					pair.second->updated = false;
 					pair.second->updateContent();
@@ -132,12 +154,12 @@ namespace TextFusion
 				exd::replaceWith(copy_writeFormat, "${path}", exd::getReplaceAll(path, "\\", "\\\\"));
 				exd::replaceWith(copy_writeFormat, "${relativePath}", exd::getReplaceAll(exd::getRelative(path, settings->get("WatchDirectory")), "\\", "\\\\"));
 				exd::replaceWith(copy_writeFormat, "${content}", exd::getReplaceAll(exd::trim(pair.second->content), "\n", "\\n\"\n\""));
-				contentofFiles[path] = copy_writeFormat;
+				filesContentHistory[path] = copy_writeFormat;
 			}
 
 			std::string data = "";
 			std::string writeFormatEncap_copy = writeFormatEncp;
-			for (auto &pair : contentofFiles)
+			for (auto &pair : filesContentHistory)
 			{
 				data += pair.second;
 			}
@@ -220,6 +242,7 @@ namespace TextFusion
 	}
 	Program::~Program() {
 		consoleHandler.join();
+		filesElementsHandler.join();
 		fileFusionHandler.join();
 
 		LOG_DESTRUCTOR("Program");
@@ -230,29 +253,10 @@ namespace TextFusion
 	}
 	void Program::run()
 	{
-		// Needed Settings for Thread Functions
-		json relevantDirectoryNames_json = settings->get("RelevantDirectoryNames");
-		json extensions_json = settings->get("Extensions");
-
-		const std::vector<std::string>& extensions = extensions_json; 
-
-		std::vector<std::string> relevantDirectoryNames = relevantDirectoryNames_json.get<std::vector<std::string>>();
-
-		// Extra Variables
-		std::vector<std::string> foundFiles;
-		std::vector<std::string> relevantDirectories;
-		std::vector<std::string> filesToRemove;
-		exd::getAllDirectoryWithNames(relevantDirectories, settings->get("WatchDirectory"), relevantDirectoryNames, true);
-
 		// Disbatched Threads
 		consoleHandler = std::thread(&Program::ConsoleThread, this);
-		fileFusionHandler = std::thread(&Program::FileFusionThread, this);
-
-		while (!STOP)
-		{
-			WatchDirectoryFunction(relevantDirectories, foundFiles, extensions);
-			FilesStateFunction(filesToRemove);
-		}
+		fileFusionHandler = std::thread(&Program::fileFusionThread, this);
+		filesElementsHandler = std::thread(&Program::fileElementsThread, this);
 	}
 
 	void Program::INIT()
