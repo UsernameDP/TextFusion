@@ -14,7 +14,7 @@ Within the `WatchDirectory` there must directly be a TextFusion.json file with a
   -- `${content}` - pastes in the raw content of the file.
 
 - `WriteFormat` : specifying the format to write each file information in.
-- `WriteFormatEncapsulation` : all of the files formatted in `WriteFormat` is pasted into _${here}_ along with other text surounding it.
+- `WriteFormatEncapsulation` : all of the files formatted in `WriteFormat` is pasted into _${here}_ along with other text surounding it. You can also put the path for where to find WriteFormatEncapsulation instead of putting the literal content (feature added because json doesn't allow you to break lines in "").
 
 - `WatchDirectoryDelay` : delay in **milliseconds** for Watching the Directory to see if any additional files have been added.
 - `FilesStateDelay` : delay in **milliseconds** for Updating the states of files (update & existence).
