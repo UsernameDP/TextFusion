@@ -3,7 +3,14 @@
 
 namespace TextFusion {
 	Settings::Settings(const std::string& watchDirectoryPath) {
-        fs::path settingsPath = static_cast<fs::path>(watchDirectoryPath) / "TextFusion.json";
+        std::vector<std::string> files;
+        std::vector<std::string> names = { "TextFusion.json" };
+        exd::getAllFilesWithNames(files, watchDirectoryPath, names, true);
+        if (files.size() > 1) {
+            THROW_RUNTIME_ERROR("There can only be 1 TextFusion.json");
+        }
+
+        fs::path settingsPath = files.front();
         if (!exd::fileExists(settingsPath.string()))
         {
             THROW_RUNTIME_ERROR("Make sure to create TextFusion.json with all settings in " + watchDirectoryPath);
@@ -23,6 +30,13 @@ namespace TextFusion {
                 THROW_RUNTIME_ERROR(message);
             }
         }
+        /*Extra initialization*/
+
+        //if "WriteFormatEncapsulation" is a path, then readFrom it and overwrite
+        if (exd::fileExists(get("WriteFormatEncapsulation"))) {
+            jsonSettings["WriteFormatEncapsulation"] = exd::readFile(get("WriteFormatEncapsulation"));
+        }
+
 
         LOG_CONSTRUCTOR("TextFusion::Settings");
 	}
