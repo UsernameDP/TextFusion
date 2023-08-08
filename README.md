@@ -2,7 +2,7 @@
 
 TextFusion is an automation console app "tool" that fuses file information from multiple textfiles (e.g .cpp, .py, .js, .hpp) and pastes them into one ultimate file with the specified format.
 
-## KeyCodes
+# KeyCodes
 
 ### FileCodes
 
@@ -18,22 +18,22 @@ TextFusion is an automation console app "tool" that fuses file information from 
 
 Within the `WatchDirectory` there must directly be a TextFusion.json file with all of the settings below configured.
 
-- `Extensions`|string array| : The program will recursively search through the `WatchDirectory` to search for any file ending with the file extensions (e.g .cpp, .hpp, .txt) you specify
-- `RelevantDirectoryNames`|string array| : adds extra specification on top of `Extensions` such that the program will only search for `Extensions` within the directories with the following names.
-- `FileToWrite`|string| : this is the file you will write your file information with the given formats.
-- `WriteFormat`|string| : specifying the format to write each file information in.
+- `Extensions`**string array** : The program will recursively search through the `WatchDirectory` to search for any file ending with the file extensions (e.g .cpp, .hpp, .txt) you specify
+- `RelevantDirectoryNames`**string array** : adds extra specification on top of `Extensions` such that the program will only search for `Extensions` within the directories with the following names.
+- `FileToWrite`**string** : this is the file you will write your file information with the given formats.
+- `WriteFormat`**string** : specifying the format to write each file information in.
   - All [FileCodes](#filecodes) can be used here
-- `WriteFormatEncapsulation`|string| : all of the files formatted in `WriteFormat` is pasted into _${here}_ along with other text surounding it. You can also put the path for where to find WriteFormatEncapsulation instead of putting the literal content (feature added because json doesn't allow you to break lines in "").
-- `ConsoleCallBacks`|string array| : any functions can be ran in the system terminal can be specified to run here. These callbacks are ran right after the program writes to `FileToWrite`. These terminal commands are ran in ORDER.
+- `WriteFormatEncapsulation`**string** : all of the files formatted in `WriteFormat` is pasted into _${here}_ along with other text surounding it. You can also put the path for where to find WriteFormatEncapsulation instead of putting the literal content (feature added because json doesn't allow you to break lines in "").
+- `ConsoleCallBacks`**string array** : any functions can be ran in the system terminal can be specified to run here. These callbacks are ran right after the program writes to `FileToWrite`. These terminal commands are ran in ORDER.
 
   - All [SettingsCodes](#settingscodes) can be used here.
 
-- `WatchDirectoryDelay`|unsigned int| : delay in **milliseconds** for Watching the Directory to see if any additional files have been added.
-- `FilesStateDelay`|unsigned int| : delay in **milliseconds** for Updating the states of files (update & existence).
-- `ConsoleDelay`|unsigned int| : delay in **milliseconds** for printing the files' update information to the console.
-- `WatchDirectoryDelay`|unsigned int| : delay in **milliseconds** for Watching the Directory to see if any additional files have been added.
-- `FilesStateDelay`|unsigned int| : delay in **milliseconds** for Updating the states of files (update & existence).
-- `ConsoleDelay`|unsigned int| : delay in **milliseconds** for printing the files' update information to the console.
+- `WatchDirectoryDelay`**unsigned int** : delay in **milliseconds** for Watching the Directory to see if any additional files have been added.
+- `FilesStateDelay`**unsigned int** : delay in **milliseconds** for Updating the states of files (update & existence).
+- `ConsoleDelay`**unsigned int** : delay in **milliseconds** for printing the files' update information to the console.
+- `WatchDirectoryDelay`**unsigned int** : delay in **milliseconds** for Watching the Directory to see if any additional files have been added.
+- `FilesStateDelay`**unsigned int** : delay in **milliseconds** for Updating the states of files (update & existence).
+- `ConsoleDelay`**unsigned int** : delay in **milliseconds** for printing the files' update information to the console.
 
 ## Example
 
